@@ -44,16 +44,19 @@ async function createPage(subject: string, code: number, courseName: string) {
 // await createPage("CS", 1100, "CS 1100: Computer Science and Its Applications")
 
 const subjectsResponse = await fetch("https://nu-courses.deno.dev/subjects");
-const subjects = await subjectsResponse.json()
+const subjects = await subjectsResponse.json();
 
-subjects.forEach(async (subject) => {
+for (const subject of subjects) {
   const coursesResponse = await fetch(`https://nu-courses.deno.dev/courses/all/${subject.code}`);
-  const courses = await coursesResponse.json()
+  const courses = await coursesResponse.json();
+
   // Wait few seconds for rate limit
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  await courses.forEach(async course => {
-    const courseName = `${course.subject} ${course.number}: ${course.title}`
-    await createPage(course.subject, parseInt(course.number), courseName)
-    await new Promise(resolve => setTimeout(resolve, 1500));
-  })
-})
+  await new Promise(resolve => setTimeout(resolve, 4000));
+
+  for (const course of courses) {
+    const courseName = `${course.subject} ${course.number}: ${course.title}`;
+    await createPage(course.subject, parseInt(course.number), courseName);
+
+    await new Promise(resolve => setTimeout(resolve, 4000));
+  }
+}
